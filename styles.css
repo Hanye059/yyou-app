@@ -1183,3 +1183,24 @@ body:has(.chat-bubble.show) .floating-container {
         }
     }
 }
+
+/* 移动端浏览器底部导航栏适配 */
+@supports (padding-bottom: env(keyboard-inset-height)) {
+    .app {
+        padding-bottom: calc(40px + env(keyboard-inset-height));
+    }
+}
+
+/* 防止移动端底部被浏览器UI遮挡 */
+@media (max-width: 480px) {
+    .input-area {
+        padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+    }
+    
+    /* 确保输入区域在可视区域内 */
+    .app {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        min-height: 100dvh;
+    }
+}
