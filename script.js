@@ -509,20 +509,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== 轮询状态函数 ==========
     async function pollStatus(chatId, conversationId) {
-        // 使用 getStoredToken() 确保获取最新的 Token
-        const currentToken = getStoredToken();
-        if (!currentToken) {
-            log('轮询失败: Token 未设置');
+        // 使用全局 ACCESS_TOKEN，与创建对话保持一致
+        if (!ACCESS_TOKEN) {
+            log('轮询失败: ACCESS_TOKEN 未设置');
             return 'timeout';
         }
         
-        // 使用 POST 方法而不是 GET，与创建对话保持一致
-        const getHeaders = { 
-            'Authorization': currentToken,
-            'Content-Type': 'application/json'
-        };
+        // 使用与创建对话完全相同的 headers
+        const headers = getPostHeaders();
         
-        log('轮询使用的 Token:', maskToken(currentToken));
+        log('轮询使用的 Token:', maskToken(ACCESS_TOKEN));
         log('轮询 ChatID:', chatId, 'ConvID:', conversationId);
 
         await new Promise(r => setTimeout(r, 1500));
@@ -532,10 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         while (attempts < maxAttempts) {
             try {
-                // Coze API v3 轮询使用 POST 方法
+                // Coze API v3 轮询使用 POST 方法，与创建对话保持一致
                 const res = await fetch(COZE_CONFIG.RETRIEVE_URL, {
                     method: 'POST',
-                    headers: getHeaders,
+                    headers: headers,
                     body: JSON.stringify({
                         chat_id: String(chatId),
                         conversation_id: String(conversationId)
@@ -577,24 +573,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== 获取最终回复函数 ==========
     async function fetchFinalReply(chatId, conversationId) {
         try {
-            // 使用 getStoredToken() 确保获取最新的 Token
-            const currentToken = getStoredToken();
-            if (!currentToken) {
-                log('获取回复失败: Token 未设置');
+            // 使用全局 ACCESS_TOKEN，与创建对话保持一致
+            if (!ACCESS_TOKEN) {
+                log('获取回复失败: ACCESS_TOKEN 未设置');
                 return null;
             }
             
-            const getHeaders = { 
-                'Authorization': currentToken,
-                'Content-Type': 'application/json'
-            };
+            // 使用与创建对话完全相同的 headers
+            const headers = getPostHeaders();
             
-            log('获取消息列表使用的 Token:', maskToken(currentToken));
+            log('获取消息列表使用的 Token:', maskToken(ACCESS_TOKEN));
 
             // Coze API v3 消息列表使用 POST 方法
             const res = await fetch(COZE_CONFIG.MESSAGE_LIST_URL, {
                 method: 'POST',
-                headers: getHeaders,
+                headers: headers,
                 body: JSON.stringify({
                     chat_id: String(chatId),
                     conversation_id: String(conversationId)
