@@ -1152,60 +1152,79 @@ body:has(.chat-bubble.show) .floating-container {
     }
 }
 
-/* 安全区域适配 - iPhone X+ */
+/* ========== iPhone 安全区域适配 ========== */
+
+/* 顶部安全区域 - 适配灵动岛 */
 @supports (padding-top: env(safe-area-inset-top)) {
     .logo-container {
-        top: calc(24px + env(safe-area-inset-top));
+        top: max(24px, env(safe-area-inset-top));
     }
 
     .settings-btn {
-        top: calc(24px + env(safe-area-inset-top));
-    }
-
-    @media (max-width: 480px) {
-        .logo-container {
-            top: calc(20px + env(safe-area-inset-top));
-        }
-
-        .settings-btn {
-            top: calc(16px + env(safe-area-inset-top));
-        }
+        top: max(24px, env(safe-area-inset-top));
     }
 }
 
+/* 底部安全区域 - 适配底部横条 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
     .app {
         padding-bottom: calc(40px + env(safe-area-inset-bottom));
     }
-
-    @media (max-width: 480px) {
-        .app {
-            padding-bottom: calc(30px + env(safe-area-inset-bottom));
-        }
-    }
 }
 
-/* 移动端浏览器底部导航栏适配 */
+/* ========== 移动端通用适配 ========== */
 @media (max-width: 480px) {
     .app {
+        /* 使用 -webkit-fill-available 兼容 iOS Safari */
+        height: -webkit-fill-available;
         height: 100dvh;
         min-height: 100dvh;
         max-height: 100dvh;
-        padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+        
+        /* 底部padding预留安全区域 */
+        padding: 20px 16px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+        
         justify-content: flex-end;
+        box-sizing: border-box;
     }
     
+    /* 确保输入区域始终在底部 */
     .input-area {
-        padding-bottom: env(safe-area-inset-bottom, 12px);
-        margin-bottom: 0;
+        position: relative;
+        width: 100%;
+        margin-bottom: max(0px, env(safe-area-inset-bottom, 0px));
+        padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
     }
     
     .character-area {
         margin-bottom: 10px;
+        flex-shrink: 1;
     }
     
     .yyou-image {
-        width: 180px;
-        height: 180px;
+        width: 160px;
+        height: 160px;
+    }
+    
+    /* 聊天气泡位置调整 */
+    .chat-bubble {
+        top: calc(15vh + env(safe-area-inset-top, 0px));
+    }
+}
+
+/* ========== iPhone 15 Pro 系列特殊适配 ========== */
+/* 针对有灵动岛的设备 */
+@supports (top: env(safe-area-inset-top)) and (padding-bottom: env(safe-area-inset-bottom)) {
+    @media (max-width: 480px) {
+        .app {
+            /* 确保内容不会被底部横条遮挡 */
+            padding-bottom: max(30px, env(safe-area-inset-bottom));
+        }
+        
+        .input-area {
+            /* 输入区域底部增加安全间距 */
+            margin-bottom: env(safe-area-inset-bottom, 0px);
+        }
     }
 }
