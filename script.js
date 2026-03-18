@@ -520,8 +520,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'Authorization': ACCESS_TOKEN
         };
         
-        // 使用 URL 参数传递 chat_id 和 conversation_id
-        const url = `${COZE_CONFIG.RETRIEVE_URL}?chat_id=${chatId}&conversation_id=${conversationId}`;
+        // 使用 URL 参数传递 bot_id, chat_id 和 conversation_id
+        const url = `${COZE_CONFIG.RETRIEVE_URL}?bot_id=${COZE_CONFIG.BOT_ID}&chat_id=${chatId}&conversation_id=${conversationId}`;
         
         log('轮询使用的 Token:', maskToken(ACCESS_TOKEN));
         log('轮询 URL:', url);
@@ -585,8 +585,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Authorization': ACCESS_TOKEN
             };
             
-            // 使用 URL 参数传递 chat_id 和 conversation_id
-            const url = `${COZE_CONFIG.MESSAGE_LIST_URL}?chat_id=${chatId}&conversation_id=${conversationId}`;
+            // 使用 URL 参数传递 bot_id, chat_id 和 conversation_id
+            const url = `${COZE_CONFIG.MESSAGE_LIST_URL}?bot_id=${COZE_CONFIG.BOT_ID}&chat_id=${chatId}&conversation_id=${conversationId}`;
             
             log('获取消息列表使用的 Token:', maskToken(ACCESS_TOKEN));
             log('获取消息列表 URL:', url);
