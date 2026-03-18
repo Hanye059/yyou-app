@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YYOU - 灵感伙伴</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 动态弥散背景层 -->
+    <div id="bgGradient" class="bg-gradient">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="app">
+        <!-- 聊天气泡 - 固定在屏幕中上方 -->
+        <div class="chat-bubble" id="chatBubble"></div>
+
+        <!-- 中心角色区 - 紧贴底部输入框上方 -->
+        <div class="character-area">
+            <div class="floating-container" id="yyouContainer">
+                <img src="yyou-character.png" alt="YYOU" class="yyou-image" id="yyouImage">
+            </div>
+        </div>
+
+        <!-- 底部交互区 -->
+        <div class="input-area">
+            <div class="input-container">
+                <input type="text" id="userInput" class="text-input" placeholder="和YYOU说点什么..." autocomplete="off">
+                <button class="mic-button" id="micBtn" type="button">
+                    <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                    </svg>
+                </button>
+            </div>
+            <p class="hint-text">按住麦克风与YYOU对话</p>
+        </div>
+    </div>
+
+    <!-- LOGO - 左上角 -->
+    <div class="logo-container">
+        <span class="logo-text">
+            <span class="logo-y1">Y</span><span class="logo-y2">Y</span><span class="logo-ou">OU</span>
+        </span>
+    </div>
+
+    <!-- 设置按钮 - 右上角悬浮 -->
+    <button class="settings-btn" id="settingsBtn" aria-label="设置" type="button">
+        <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </button>
+
+    <!-- 设置模态框 -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ 连接设置</h2>
+                <button class="modal-close" id="closeSettings" aria-label="关闭" type="button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">输入你的 Coze Token，让YYOU能够和你对话~</p>
+                <div class="input-group">
+                    <label for="tokenInput" class="input-label">Coze Token</label>
+                    <input
+                        type="password"
+                        id="tokenInput"
+                        class="modal-input"
+                        placeholder="粘贴你的 Token 到这里..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- 查看领养手册按钮 -->
+                <button class="manual-btn" id="viewManualBtn" type="button">
+                    <span class="manual-icon">📖</span>
+                    <span>查看领养手册</span>
+                </button>
+
+                <button class="save-btn" id="saveTokenBtn" type="button">💾 保存连接</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 领养手册模态框 -->
+    <div class="modal-overlay" id="manualModal">
+        <div class="modal-content manual-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🌟 YYOU 极简领养手册</h2>
+                <button class="modal-close" id="closeManual" aria-label="关闭" type="button">&times;</button>
+            </div>
+            <div class="modal-body manual-body">
+                <!-- 第一部分：唤醒 YYOU -->
+                <div class="manual-section">
+                    <div class="manual-section-header">
+                        <span class="manual-section-number">1</span>
+                        <h3 class="manual-section-title">唤醒 YYOU：如何获取 API 密钥？</h3>
+                    </div>
+                    <div class="manual-section-content">
+                        <p class="manual-intro">为了保证你的对话隐私和能量供应，YYOU 需要连接到你自己的 Coze 能量站。</p>
+                        <div class="manual-steps">
+                            <div class="manual-step">
+                                <div class="manual-step-marker">①</div>
+                                <div class="manual-step-text">
+                                    <strong>访问能量站</strong>
+                                    <p>前往 <a href="https://www.coze.cn" target="_blank" rel="noopener">Coze.cn</a>（国内版）或 <a href="https://www.coze.com" target="_blank" rel="noopener">Coze.com</a>（国际版）并登录。</p>
+                                </div>
+                            </div>
+                            <div class="manual-step">
+                                <div class="manual-step-marker">②</div>
+                                <div class="manual-step-text">
+                                    <strong>进入设置</strong>
+                                    <p>点击左下角头像，进入<strong>个人设置 (Personal Settings) -> 令牌 (API Keys)</strong>。</p>
+                                </div>
+                            </div>
+                            <div class="manual-step">
+                                <div class="manual-step-marker">③</div>
+                                <div class="manual-step-text">
+                                    <strong>生成令牌</strong>
+                                    <p>点击<strong>生成新令牌 (Generate new token)</strong>，起个名字（比如"给 YYOU 的零食"），然后复制那串长长的代码。</p>
+                                </div>
+                            </div>
+                            <div class="manual-step">
+                                <div class="manual-step-marker">④</div>
+                                <div class="manual-step-text">
+                                    <strong>完成连接</strong>
+                                    <p>回到 YYOU 界面，点击右下角小齿轮 ⚙️，把代码粘贴进去并保存。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二部分：交互秘籍 -->
+                <div class="manual-section">
+                    <div class="manual-section-header">
+                        <span class="manual-section-number">2</span>
+                        <h3 class="manual-section-title">交互秘籍：怎么玩转 YYOU？</h3>
+                    </div>
+                    <div class="manual-section-content">
+                        <div class="manual-feature">
+                            <div class="manual-feature-icon">🎙️</div>
+                            <div class="manual-feature-text">
+                                <strong>对讲机模式</strong>
+                                <p>长按右下角的麦克风图标，看到紫色脉冲波纹出现后开始说话，松手即发送。你会看到文字实时跳进输入框。</p>
+                            </div>
+                        </div>
+                        <div class="manual-feature">
+                            <div class="manual-feature-icon">⚡️</div>
+                            <div class="manual-feature-text">
+                                <strong>情绪共振</strong>
+                                <p>试着在对话里输入 <code>⚡️</code> 或 <code>☁️</code>，观察背景的动态弥散光晕是如何随之流转的。</p>
+                            </div>
+                        </div>
+                        <div class="manual-feature">
+                            <div class="manual-feature-icon">✨</div>
+                            <div class="manual-feature-text">
+                                <strong>流式阅读</strong>
+                                <p>YYOU 回复时会像真人一样停顿和思考，请享受文字一段段跃然纸上的节奏感。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部提示 -->
+                <div class="manual-tip">
+                    <span class="manual-tip-icon">💡</span>
+                    <p class="manual-tip-text">小贴士：Token 就像 YYOU 的"零食"，填上它，YYOU 才有力气陪你聊天哦！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
