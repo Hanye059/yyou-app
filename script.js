@@ -509,7 +509,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== 轮询状态函数 ==========
     async function pollStatus(chatId, conversationId) {
-        const getHeaders = { 'Authorization': ACCESS_TOKEN };
+        // 使用 getStoredToken() 确保获取最新的 Token
+        const currentToken = getStoredToken();
+        if (!currentToken) {
+            log('轮询失败: Token 未设置');
+            return 'timeout';
+        }
+        
+        const getHeaders = { 'Authorization': currentToken };
         const url = `${COZE_CONFIG.RETRIEVE_URL}?chat_id=${String(chatId)}&conversation_id=${String(conversationId)}`;
 
         await new Promise(r => setTimeout(r, 1500));
@@ -538,6 +545,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (data.code !== 0) {
                     log('警告：服务器返回异常码', data.code, data.msg);
+                    // 如果是认证错误，直接返回失败
+                    if (data.code === 4100 || data.code === 4101) {
+                        return 'failed';
+                    }
                 }
             } catch (err) {
                 log('轮询出错', err);
@@ -554,8 +565,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== 获取最终回复函数 ==========
     async function fetchFinalReply(chatId, conversationId) {
         try {
+            // 使用 getStoredToken() 确保获取最新的 Token
+            const currentToken = getStoredToken();
+            if (!currentToken) {
+                log('获取回复失败: Token 未设置');
+                return null;
+            }
+            
             const url = `${COZE_CONFIG.MESSAGE_LIST_URL}?chat_id=${String(chatId)}&conversation_id=${String(conversationId)}`;
-            const getHeaders = { 'Authorization': ACCESS_TOKEN };
+            const getHeaders = { 'Authorization': currentToken };
 
             const res = await fetch(url, {
                 method: 'GET',
