@@ -516,8 +516,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return 'timeout';
         }
         
-        const getHeaders = { 'Authorization': currentToken };
-        const url = `${COZE_CONFIG.RETRIEVE_URL}?chat_id=${String(chatId)}&conversation_id=${String(conversationId)}`;
+        // 使用 POST 方法而不是 GET，与创建对话保持一致
+        const getHeaders = { 
+            'Authorization': currentToken,
+            'Content-Type': 'application/json'
+        };
+        
+        log('轮询使用的 Token:', maskToken(currentToken));
+        log('轮询 ChatID:', chatId, 'ConvID:', conversationId);
 
         await new Promise(r => setTimeout(r, 1500));
 
@@ -526,9 +532,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         while (attempts < maxAttempts) {
             try {
-                const res = await fetch(url, {
-                    method: 'GET',
-                    headers: getHeaders
+                // Coze API v3 轮询使用 POST 方法
+                const res = await fetch(COZE_CONFIG.RETRIEVE_URL, {
+                    method: 'POST',
+                    headers: getHeaders,
+                    body: JSON.stringify({
+                        chat_id: String(chatId),
+                        conversation_id: String(conversationId)
+                    })
                 });
 
                 const data = await res.json();
@@ -547,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     log('警告：服务器返回异常码', data.code, data.msg);
                     // 如果是认证错误，直接返回失败
                     if (data.code === 4100 || data.code === 4101) {
+                        log('认证失败，停止轮询');
                         return 'failed';
                     }
                 }
@@ -572,12 +584,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             
-            const url = `${COZE_CONFIG.MESSAGE_LIST_URL}?chat_id=${String(chatId)}&conversation_id=${String(conversationId)}`;
-            const getHeaders = { 'Authorization': currentToken };
+            const getHeaders = { 
+                'Authorization': currentToken,
+                'Content-Type': 'application/json'
+            };
+            
+            log('获取消息列表使用的 Token:', maskToken(currentToken));
 
-            const res = await fetch(url, {
-                method: 'GET',
-                headers: getHeaders
+            // Coze API v3 消息列表使用 POST 方法
+            const res = await fetch(COZE_CONFIG.MESSAGE_LIST_URL, {
+                method: 'POST',
+                headers: getHeaders,
+                body: JSON.stringify({
+                    chat_id: String(chatId),
+                    conversation_id: String(conversationId)
+                })
             });
 
             const msgListData = await res.json();
